@@ -1,0 +1,12 @@
+version: "3.8"
+services:
+  front-app:
+    image: node:alpine3.10
+    container_name: reformat-irn-front
+    ports:
+      - 3000:3000
+    working_dir: /opt/app
+    command: sh -c "npm install --no-update-notifier; npm start --no-update-notifier"
+    volumes:
+      - .:/opt/app
+      - /opt/app/node_modules
