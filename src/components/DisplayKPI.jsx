@@ -1,34 +1,41 @@
-const DisplayKPI = () => {
+const DisplayKPI = ({titre, description, score, score_region, nomVille, nomRegion, nomDepartement}) => {
+    //function that put strings in uppercase
+    const upperCase = (str) => {
+        if (str) {
+            return str.toUpperCase();
+        }
+    }
     return (
-        <div className="grid">
-            <div>
-                <article>
-                    <header>Nom de Région</header>
-                    Score de la région
-                    <footer>Comparatif en %</footer>
-                </article>
-            </div>
-            <div>
-                <article>
-                    <header>Nom de la ville</header>
-                    Score de la ville
-                    <footer>Footer</footer>
-                </article>
+        <>
+            <h1>{upperCase(titre)}</h1>
+            <p>{description}</p>
 
-            </div>
-            <div>
-                <article>
-                    <header>Score</header>
-                    Body
-                    <footer>Footer</footer>
-                </article>
+            <div className="grid">
+                <div>
+                    <article>
+                        <header>Evo de la région</header>
+                        <h2>{score_region}</h2>
+                        <footer>{nomRegion}</footer>
+                    </article>
+                </div>
+                <div>
+                    <article>
+                        {score}
+                        <footer>{nomVille}</footer>
+                    </article>
 
-                Un indice élevé indique une fragilité numérique plus grande.
-                Le calcul des indicateurs étant relatif par rapport aux autres communes,
-                la moyenne
-            </div>
-        </div>
+                </div>
+                <div>
+                    <article>
+                        <header>Evo du département</header>
+                        Score du département
+                        <footer>{nomDepartement}</footer>
+                    </article>
 
+
+                </div>
+            </div>
+        </>
     );
 };
 export default DisplayKPI;
