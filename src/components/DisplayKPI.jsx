@@ -1,5 +1,5 @@
-import redarrow from '../img/redarrow.png';
-import greenarrow from '../img/greenarrow.png';
+import redarrow from '../img/redarrow.webp';
+import greenarrow from '../img/greenarrow.webp';
 
 const DisplayKPI = ({titre, description, score, score_region, nomVille, nomRegion, nomDepartement}) => {
     //function that put strings in uppercase

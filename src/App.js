@@ -1,6 +1,6 @@
 import {useState} from "react";
 import DisplayKPI from "./components/DisplayKPI";
-import {fetchApi} from "./lib/fetchApi";
+import {fetchApi, getAllCity, getAllInsideDepartement, searchForAutoComplete} from "./lib/fetchApi";
 import {FRONT_LABELS} from "./lib/constants";
 
 
@@ -11,25 +11,9 @@ function App() {
     const [showKPI, setShowKPI] = useState(false);
     const [selectedValue, setSelectedValue] = useState({});
 
-    async function searchForAutoComplete(searchValue) {
-        const data = await fetchApi('test', {
-            "nom_com_like": "^" + searchValue,
-        });
+    async function resultForAutoComplete(searchValue) {
+        const data = await searchForAutoComplete(searchValue);
         setSearchAutoCompleteResults(data);
-    }
-
-    async function getAllCity(searchValue) {
-        const data = await fetchApi('test', {
-            "nom_com": searchValue,
-        });
-        return data;
-    }
-
-    async function getAllInsideDepartement(searchValue) {
-        const data = await fetchApi('test', {
-            "nom_com": searchValue,
-        });
-        return data;
     }
 
     async function attributeKPI(searchResult) {
@@ -54,7 +38,7 @@ function App() {
                 "score_global": parseInt(previousValue["score_global"]) + parseInt(currentValue["score_global"]),
                 "population": previousValue["population"] + currentValue["population"],
                 "nom_iris": previousValue["nom_iris"] + currentValue["nom_iris"],
-                "nom_com": previousValue["nom_com"] + currentValue["nom_com"],
+                "nom_com": currentValue["nom_com"],
                 "global_competences": parseInt(previousValue["global_competences"]) + parseInt(currentValue["global_competences"]),
                 "global_access": previousValue["global_access"] + currentValue["global_access"],
                 "competence_numerique_scolaire": parseInt(previousValue["competence_numerique_scolaire"]) + parseInt(currentValue["competence_numerique_scolaire"]),
@@ -79,7 +63,7 @@ function App() {
         //function that check if the user types on enter
         async function handleKeyPress(e) {
             if (e.key === 'Enter') {
-                await searchForAutoComplete(e.target.value);
+                await resultForAutoComplete(e.target.value);
             }
         }
 
