@@ -22,17 +22,13 @@ function App() {
         const getRegion = await getAllCity(searchResult.nom_com);
 
         if(getCities){
-            setSelectedValue(calculateSomething(getCities));
+            setSelectedValue(calculateProperties(getCities));
         }
         setShowKPI(!showKPI);
     }
 
-    function average(value){
-
-    }
-
-    function calculateSomething(result) {
-        const bigObject = result.reduce(function (previousValue, currentValue) {
+    function calculateProperties(result) {
+        const inrObject = result.reduce(function (previousValue, currentValue) {
             return {
                 "score_global_region": parseInt(previousValue["score_global_region"]) + parseInt(currentValue["score_global_region"]),
                 "score_global": parseInt(previousValue["score_global"]) + parseInt(currentValue["score_global"]),
@@ -48,16 +44,16 @@ function App() {
                 "access_info": parseInt(previousValue["access_info"]) + parseInt(currentValue["access_info"])
             }
         });
-        bigObject["score_global_region"] = (bigObject.score_global_region / result.length).toFixed(2);
-        bigObject["score_global"] = (bigObject.score_global / result.length).toFixed(2);
-        bigObject["population"] = (bigObject.population / result.length).toFixed(2);
-        bigObject["global_competences"] = (bigObject.global_competences / result.length).toFixed(2);
-        bigObject["global_access"] = (bigObject.global_access / result.length).toFixed(2);
-        bigObject["competence_numerique_scolaire"] = (bigObject.competence_numerique_scolaire / result.length).toFixed(2);
-        bigObject["competence_administrative"] = (bigObject.competence_administrative / result.length).toFixed(2);
-        bigObject["access_interface_numeric"] = (bigObject.access_interface_numeric / result.length).toFixed(2);
-        bigObject["access_info"] = (bigObject.access_info / result.length).toFixed(2);
-        return bigObject;
+        inrObject["score_global_region"] = (inrObject.score_global_region / result.length).toFixed(2);
+        inrObject["score_global"] = (inrObject.score_global / result.length).toFixed(2);
+        inrObject["population"] = (inrObject.population / result.length).toFixed(2);
+        inrObject["global_competences"] = (inrObject.global_competences / result.length).toFixed(2);
+        inrObject["global_access"] = (inrObject.global_access / result.length).toFixed(2);
+        inrObject["competence_numerique_scolaire"] = (inrObject.competence_numerique_scolaire / result.length).toFixed(2);
+        inrObject["competence_administrative"] = (inrObject.competence_administrative / result.length).toFixed(2);
+        inrObject["access_interface_numeric"] = (inrObject.access_interface_numeric / result.length).toFixed(2);
+        inrObject["access_info"] = (inrObject.access_info / result.length).toFixed(2);
+        return inrObject;
     }
 
         //function that check if the user types on enter
