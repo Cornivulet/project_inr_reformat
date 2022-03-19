@@ -3,7 +3,7 @@ export const codeRegionStr = '{api-codeReg}';
 
 export const CONSTANTS = {
     URL_BACK: "http://localhost:3002",
-    URL_GOUV_REGION: `https://geo.api.gouv.fr/departements/${codeDepartementStr}?fields=codeRegion`,
+    URL_GOUV_REGION: `https://geo.api.gouv.fr/departements/${codeDepartementStr}?fields=region`,
     URL_GOUV_REGION_DEPART: `https://geo.api.gouv.fr/regions/${codeRegionStr}/departements?fields=code`
 
 }

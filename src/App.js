@@ -1,7 +1,7 @@
-import {useState} from "react";
+import { useState } from "react";
 import DisplayKPI from "./components/DisplayKPI";
-import {fetchApi, getAllCity, getAllInsideDepartement, searchForAutoComplete} from "./lib/fetchApi";
-import {FRONT_LABELS} from "./lib/constants";
+import { fetchApi, getAllCity, getAllCitiesOfAllDepartementOfRegion, searchForAutoComplete } from "./lib/fetchApi";
+import { FRONT_LABELS } from "./lib/constants";
 
 
 function App() {
@@ -9,7 +9,9 @@ function App() {
     const [searchResults, setSearchResults] = useState([]);
     const [searchAutoCompleteResults, setSearchAutoCompleteResults] = useState([]);
     const [showKPI, setShowKPI] = useState(false);
-    const [selectedValue, setSelectedValue] = useState({});
+    const [selectedCityPart, setSelectedCityPart] = useState(false);
+    const [selectedCitiesOfDepartemants, setSelectedCitiesOfDepartements] = useState(false);
+    const [selectedCitiesOfRegion, setSelectedCitiesOfRegion] = useState(false);
 
     async function resultForAutoComplete(searchValue) {
         const data = await searchForAutoComplete(searchValue);
@@ -17,96 +19,117 @@ function App() {
     }
 
     async function attributeKPI(searchResult) {
-        const getCities = await getAllCity(searchResult.nom_com);
-        const getDepartement = await getAllInsideDepartement(searchResult.nom_com);
-        const getRegion = await getAllCity(searchResult.nom_com);
 
-        if(getCities){
-            setSelectedValue(calculateProperties(getCities));
+        const regions = await getAllCitiesOfAllDepartementOfRegion(searchResult.code_iris);
+        console.log(regions)
+
+        setSelectedCitiesOfRegion(calculateProperties(regions));
+
+
+        if(selectedCitiesOfRegion){
+            setSelectedCitiesOfDepartements(calculateProperties({
+                info: selectedCitiesOfRegion.departementList.find((item) => item.code == searchResult.code_iris.slice(0, 2)),
+                citiesList: selectedCitiesOfRegion.citiesList.filter((item) => item.code_iris.slice(0, 2) == searchResult.code_iris.slice(0, 2))
+            }));
+
         }
+
+        if(selectedCitiesOfRegion && selectedCitiesOfDepartemants){
+            setSelectedCityPart(calculateProperties({
+                citiesList: selectedCitiesOfDepartemants.citiesList.filter((item) => item.code_iris == searchResult.code_iris),
+                info: searchResult
+            }));
+
+        }  
+
+        console.log(selectedCitiesOfRegion, selectedCitiesOfDepartemants, setSelectedCityPart)
         setShowKPI(!showKPI);
     }
 
     function calculateProperties(result) {
-        const inrObject = result.reduce(function (previousValue, currentValue) {
+
+        const inrObject = result.citiesList.reduce(function (previousValue, currentValue) {
             return {
                 "score_global_region": parseInt(previousValue["score_global_region"]) + parseInt(currentValue["score_global_region"]),
                 "score_global": parseInt(previousValue["score_global"]) + parseInt(currentValue["score_global"]),
-                "population": previousValue["population"] + currentValue["population"],
-                "nom_iris": previousValue["nom_iris"] + currentValue["nom_iris"],
-                "nom_com": currentValue["nom_com"],
+                "population": parseInt(previousValue["population"] + currentValue["population"]),
                 "global_competences": parseInt(previousValue["global_competences"]) + parseInt(currentValue["global_competences"]),
-                "global_access": previousValue["global_access"] + currentValue["global_access"],
+                "global_access": parseInt(previousValue["global_access"] + currentValue["global_access"]),
                 "competence_numerique_scolaire": parseInt(previousValue["competence_numerique_scolaire"]) + parseInt(currentValue["competence_numerique_scolaire"]),
                 "competence_administrative": parseInt(previousValue["competence_administrative"]) + parseInt(currentValue["competence_administrative"]),
-                "code_iris": previousValue["code_iris"] + currentValue["code_iris"],
                 "access_interface_numeric": parseInt(previousValue["access_interface_numeric"]) + parseInt(currentValue["access_interface_numeric"]),
                 "access_info": parseInt(previousValue["access_info"]) + parseInt(currentValue["access_info"])
             }
         });
-        inrObject["score_global_region"] = (inrObject.score_global_region / result.length).toFixed(2);
-        inrObject["score_global"] = (inrObject.score_global / result.length).toFixed(2);
-        inrObject["population"] = (inrObject.population / result.length).toFixed(2);
-        inrObject["global_competences"] = (inrObject.global_competences / result.length).toFixed(2);
-        inrObject["global_access"] = (inrObject.global_access / result.length).toFixed(2);
-        inrObject["competence_numerique_scolaire"] = (inrObject.competence_numerique_scolaire / result.length).toFixed(2);
-        inrObject["competence_administrative"] = (inrObject.competence_administrative / result.length).toFixed(2);
-        inrObject["access_interface_numeric"] = (inrObject.access_interface_numeric / result.length).toFixed(2);
-        inrObject["access_info"] = (inrObject.access_info / result.length).toFixed(2);
-        return inrObject;
-    }
-
-        //function that check if the user types on enter
-        async function handleKeyPress(e) {
-            if (e.key === 'Enter') {
-                await resultForAutoComplete(e.target.value);
-            }
+        for (const props in inrObject) {
+            inrObject[props] = (inrObject[props] / result.length).toFixed(2);
         }
 
-        const data = async () => await fetchApi('test', {
-            "nom_iris_like": searchValue
-        });
+        result.citiesList = inrObject;
 
-        return (
-            <div className="App">
-                <div className='container'>
-                    <h1>Analysez les données de votre commune</h1>
-
-                    <input type="search" id="search" name="search" placeholder="Search" onKeyDown={handleKeyPress}/>
-
-                    <article>
-                        Un indice élevé indique une fragilité numérique plus grande.
-                        Le calcul des indicateurs étant relatif par rapport aux autres communes,
-                        la moyenne de chaque indicateur est de 100.
-                    </article>
-
-                    {searchAutoCompleteResults && !showKPI && (
-                        [...new Map(searchAutoCompleteResults.map(item => [item["nom_com"], item])).values()].map((searchAutoCompleteResult => {
-                            return <article onClick={() => attributeKPI(searchAutoCompleteResult)}
-                                            key={searchAutoCompleteResult.code_iris}> {searchAutoCompleteResult.nom_com} </article>
-                        })).slice(0, 3)
-                    )}
-                </div>
-                {showKPI && selectedValue && (
-                    <>
-                        <DisplayKPI titre={FRONT_LABELS.GLOBAL_SCORE_TITLE} score={selectedValue.score_global} nomVille={selectedValue.nom_com}/>
-                        <DisplayKPI titre={FRONT_LABELS.INFORMATION_ACCESS_TITLE}
-                                    description={FRONT_LABELS.INFORMATION_ACCESS_DESCRIPTION} score={selectedValue.access_info}/>
-                        <DisplayKPI titre={FRONT_LABELS.NUMERIC_INTERFACE_ACCESS_TITLE}
-                                    description={FRONT_LABELS.NUMERIC_INTERFACE_ACCESS_DESCRIPTION} score={selectedValue.access_interface_numeric}/>
-                        <DisplayKPI titre={FRONT_LABELS.NUMERIC_SKILLS_TITLE}
-                                    description={FRONT_LABELS.NUMERIC_SKILLS_DESCRIPTION} score={selectedValue.competence_numerique_scolaire} />
-                        <DisplayKPI titre={FRONT_LABELS.ADMINISTRATIVE_SKILLS_TITLE}
-                                    description={FRONT_LABELS.ADMINISTRATIVE_SKILLS_DESCRIPTION} score={selectedValue.competence_administrative}/>
-                    </>
-
-                )
-
-                }
-
-
-            </div>
-        );
+        return result;
     }
 
-    export default App;
+    //function that check if the user types on enter
+    async function handleKeyPress(e) {
+        if (e.key === 'Enter') {
+            await resultForAutoComplete(e.target.value);
+        }
+    }
+    /*
+
+    const data = async () => await fetchApi('test', {
+        "nom_iris_like": searchValue
+    });
+*/
+    return (
+        <div className="App">
+            <div className='container'>
+                <h1>Analysez les données de votre commune</h1>
+
+                <input type="search" id="search" name="search" placeholder="Search" onKeyDown={handleKeyPress} />
+
+                <article>
+                    Un indice élevé indique une fragilité numérique plus grande.
+                    Le calcul des indicateurs étant relatif par rapport aux autres communes,
+                    la moyenne de chaque indicateur est de 100.
+                </article>
+
+                {searchAutoCompleteResults && !showKPI && (
+                    [...new Map(searchAutoCompleteResults.map(item => [item["nom_com"], item])).values()].map((searchAutoCompleteResult => {
+                        return <article onClick={() => attributeKPI(searchAutoCompleteResult)}
+                            key={searchAutoCompleteResult.code_iris}> {searchAutoCompleteResult.nom_com} </article>
+                    })).slice(0, 3)
+                )}
+            </div>
+            {showKPI && selectedCityPart && selectedCitiesOfDepartemants && selectedCitiesOfRegion && (
+                <>
+                    <DisplayKPI
+                        titre={FRONT_LABELS.GLOBAL_SCORE_TITLE}
+                        score={selectedCityPart.citiesList.score_global}
+                        nomVille={selectedCityPart.info.nom_com}
+                        scoreRegion={selectedCitiesOfRegion.citiesList.score_global}
+                        nomRegion={selectedCitiesOfRegion.info.nom}
+                        nomDepartement={selectedCitiesOfDepartemants.info.nom}
+
+                    />
+                    <DisplayKPI titre={FRONT_LABELS.INFORMATION_ACCESS_TITLE}
+                        description={FRONT_LABELS.INFORMATION_ACCESS_DESCRIPTION} score={selectedCityPart.citiesList.access_info} />
+                    <DisplayKPI titre={FRONT_LABELS.NUMERIC_INTERFACE_ACCESS_TITLE}
+                        description={FRONT_LABELS.NUMERIC_INTERFACE_ACCESS_DESCRIPTION} score={selectedCityPart.citiesList.access_interface_numeric} />
+                    <DisplayKPI titre={FRONT_LABELS.NUMERIC_SKILLS_TITLE}
+                        description={FRONT_LABELS.NUMERIC_SKILLS_DESCRIPTION} score={selectedCityPart.citiesList.competence_numerique_scolaire} />
+                    <DisplayKPI titre={FRONT_LABELS.ADMINISTRATIVE_SKILLS_TITLE}
+                        description={FRONT_LABELS.ADMINISTRATIVE_SKILLS_DESCRIPTION} score={selectedCityPart.citiesList.competence_administrative} />
+                </>
+
+            )
+
+            }
+
+
+        </div>
+    );
+}
+
+export default App;

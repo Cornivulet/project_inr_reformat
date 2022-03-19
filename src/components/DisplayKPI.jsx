@@ -1,7 +1,7 @@
 import redarrow from '../img/redarrow.webp';
 import greenarrow from '../img/greenarrow.webp';
 
-const DisplayKPI = ({titre, description, score, score_region, nomVille, nomRegion, nomDepartement}) => {
+const DisplayKPI = ({titre, description, score, scoreRegion, nomVille, nomRegion, nomDepartement}) => {
     //function that put strings in uppercase
     const upperCase = (str) => {
         if (str) {
@@ -22,7 +22,7 @@ const DisplayKPI = ({titre, description, score, score_region, nomVille, nomRegio
                                 <img src={redarrow} alt=''/>
                             </picture>
                         </header>
-                        <h2>{score_region}</h2>
+                        <h2>{scoreRegion}</h2>
                         <footer>{nomRegion}</footer>
                     </article>
                 </div>
