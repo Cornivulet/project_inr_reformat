@@ -20,9 +20,26 @@ function App() {
 
     async function attributeKPI(searchResult) {
 
-        const regions = await getAllCitiesOfAllDepartementOfRegion(searchResult.code_iris);
-        console.log(regions)
+        const response = await getAllCitiesOfAllDepartementOfRegion(searchResult.code_iris);
 
+        const region = {
+            data: calculateProperties(response.citiesList),
+            info: response.info
+        }
+
+        const departement = {
+            data: calculateProperties(response.citiesList.filter((item) => item.code_iris.slice(0, 2) == searchResult.code_iris.slice(0, 2))),
+            info: response.departementList.find((item) => item.code == searchResult.code_iris.slice(0, 2))
+        }
+
+        const cities = {
+            data: calculateProperties(response.citiesList.filter((item) => item.code_iris == searchResult.code_iris)),
+            info: searchResult
+        }
+
+        console.log({region}, {departement}, {cities})
+
+   /*     
         setSelectedCitiesOfRegion(calculateProperties(regions));
 
 
@@ -43,12 +60,14 @@ function App() {
         }  
 
         console.log(selectedCitiesOfRegion, selectedCitiesOfDepartemants, setSelectedCityPart)
+
+        */
         setShowKPI(!showKPI);
     }
 
-    function calculateProperties(result) {
+    function calculateProperties(list) {
 
-        const inrObject = result.citiesList.reduce(function (previousValue, currentValue) {
+        const inrObject = list.reduce(function (previousValue, currentValue) {
             return {
                 "score_global_region": parseInt(previousValue["score_global_region"]) + parseInt(currentValue["score_global_region"]),
                 "score_global": parseInt(previousValue["score_global"]) + parseInt(currentValue["score_global"]),
@@ -62,12 +81,11 @@ function App() {
             }
         });
         for (const props in inrObject) {
-            inrObject[props] = (inrObject[props] / result.length).toFixed(2);
+            inrObject[props] = (inrObject[props] / list.length).toFixed(2);
         }
 
-        result.citiesList = inrObject;
+        return inrObject;
 
-        return result;
     }
 
     //function that check if the user types on enter

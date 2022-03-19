@@ -41,7 +41,6 @@ export async function getAllCitiesOfAllDepartementOfRegion(codeIris) {
     const citiesList= await fetchApi('test', {
         "code_iris_like": allDepFormattedStr,
     });
-        console.log({citiesList})
 
 
     const d =  {
@@ -49,6 +48,8 @@ export async function getAllCitiesOfAllDepartementOfRegion(codeIris) {
         departementList,
         info: regionCall.region
     }
+    console.log({d})
+
     return d;
 }
 
