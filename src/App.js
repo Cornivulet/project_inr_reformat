@@ -84,6 +84,20 @@ function App() {
                 <h1>
                     Analysez les données de votre commune
                 </h1>
+
+                <article className="explication">
+                    <PictureSet
+                        webp={recycleW}
+                        avif={recycleA}
+                        jpg={recycleJ}
+                        alt={"Icône recyclage"}
+                    />
+                    <br/>
+                    Un indice élevé indique une fragilité numérique plus grande.
+                    Le calcul des indicateurs étant relatif par rapport aux autres communes,
+                    la moyenne de chaque indicateur est de 100.
+                </article>
+
                 <div className={'grid'}>
                     <PictureSet
                         webp={numeriqueW}
@@ -102,19 +116,6 @@ function App() {
 
                 <input type="search" id="search" name="search" placeholder="Search" onKeyDown={handleKeyPress}
                        style={{paddingTop: '10px'}}/>
-
-                <article>
-                    <PictureSet
-                        webp={recycleW}
-                        avif={recycleA}
-                        jpg={recycleJ}
-                        alt={"Icône recyclage"}
-                    />
-                    <br/>
-                    Un indice élevé indique une fragilité numérique plus grande.
-                    Le calcul des indicateurs étant relatif par rapport aux autres communes,
-                    la moyenne de chaque indicateur est de 100.
-                </article>
 
 
                 {searchAutoCompleteResults && !showKPI && (
