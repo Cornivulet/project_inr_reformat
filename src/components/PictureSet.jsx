@@ -1,4 +1,4 @@
-const ImageHeader = ({webp, avif, jpg, alt}) => {
+const ImageHeader = ({ webp, avif, jpg, alt }) => {
 
     return (
         <>
@@ -10,7 +10,8 @@ const ImageHeader = ({webp, avif, jpg, alt}) => {
                     srcSet={avif} media={`(max-width: 64px)`}
                 />
                 <img src={jpg} alt={alt}
-                     style={{width: '256px', height: '256px', paddingTop: '10px', margin: 'auto'}}/>
+                    width="640" height="360"
+                    style={{ width: '256px', height: '256px', paddingTop: '10px', margin: 'auto' }} />
             </picture>
         </>
     )
