@@ -16,24 +16,7 @@ function smokeTest(){
 
 }
 
-function stressTest(){
-
-}
-
-
-
-function soakTest(){
-
-
-}
-
-function loadTest(){
-
-
-}
-
 export default function () {
-
     basicTest();
     smokeTest();
 

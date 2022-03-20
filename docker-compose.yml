@@ -18,9 +18,25 @@ services:
     volumes:
       - ./data:/data
     restart: always
-  k6:
+
+  k6-smoke:
     image: loadimpact/k6:latest
-    command: run /test.js
+    command:  run /k6-sample/smokeTest.js
     volumes:
-      - ./k6-sample/test.js:/test.js
-      - ./k6-sample/sample.json:/sample.json
+      - ./k6-sample:/k6-sample
+  k6-stress:
+    image: loadimpact/k6:latest
+    command: run /k6-sample/stressTest.js
+    volumes:
+      - ./k6-sample:/k6-sample
+  k6-soak:
+    image: loadimpact/k6:latest
+    command: run /k6-sample/soakTest.js
+    volumes:
+      - ./k6-sample:/k6-sample
+  k6-load:
+    image: loadimpact/k6:latest
+    command: run /k6-sample/loadTest.js
+    volumes:
+      - ./k6-sample:/k6-sample
+
