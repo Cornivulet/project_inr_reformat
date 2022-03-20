@@ -43,14 +43,12 @@ export async function getAllCitiesOfAllDepartementOfRegion(codeIris) {
     });
 
 
-    const d =  {
+    return {
         citiesList,
         departementList,
         info: regionCall.region
     }
-    console.log({d})
 
-    return d;
 }
 
 

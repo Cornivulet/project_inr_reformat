@@ -5,13 +5,9 @@ import { FRONT_LABELS } from "./lib/constants";
 
 
 function App() {
-    const [searchValue, setSearchValue] = useState('');
-    const [searchResults, setSearchResults] = useState([]);
     const [searchAutoCompleteResults, setSearchAutoCompleteResults] = useState([]);
     const [showKPI, setShowKPI] = useState(false);
-    const [selectedCityPart, setSelectedCityPart] = useState(false);
-    const [selectedCitiesOfDepartemants, setSelectedCitiesOfDepartements] = useState(false);
-    const [selectedCitiesOfRegion, setSelectedCitiesOfRegion] = useState(false);
+    const [dataPage, setDataPage] = useState(false);
 
     async function resultForAutoComplete(searchValue) {
         const data = await searchForAutoComplete(searchValue);
@@ -22,46 +18,24 @@ function App() {
 
         const response = await getAllCitiesOfAllDepartementOfRegion(searchResult.code_iris);
 
-        const region = {
-            data: calculateProperties(response.citiesList),
-            info: response.info
-        }
 
-        const departement = {
-            data: calculateProperties(response.citiesList.filter((item) => item.code_iris.slice(0, 2) == searchResult.code_iris.slice(0, 2))),
-            info: response.departementList.find((item) => item.code == searchResult.code_iris.slice(0, 2))
-        }
+        setDataPage({
+            region: {
+                data: calculateProperties(response.citiesList),
+                info: response.info
+            },
 
-        const cities = {
-            data: calculateProperties(response.citiesList.filter((item) => item.code_iris == searchResult.code_iris)),
-            info: searchResult
-        }
+            departement: {
+                data: calculateProperties(response.citiesList.filter((item) => item.code_iris.slice(0, 2) == searchResult.code_iris.slice(0, 2))),
+                info: response.departementList.find((item) => item.code == searchResult.code_iris.slice(0, 2))
+            },
 
-        console.log({region}, {departement}, {cities})
-
-   /*     
-        setSelectedCitiesOfRegion(calculateProperties(regions));
-
-
-        if(selectedCitiesOfRegion){
-            setSelectedCitiesOfDepartements(calculateProperties({
-                info: selectedCitiesOfRegion.departementList.find((item) => item.code == searchResult.code_iris.slice(0, 2)),
-                citiesList: selectedCitiesOfRegion.citiesList.filter((item) => item.code_iris.slice(0, 2) == searchResult.code_iris.slice(0, 2))
-            }));
-
-        }
-
-        if(selectedCitiesOfRegion && selectedCitiesOfDepartemants){
-            setSelectedCityPart(calculateProperties({
-                citiesList: selectedCitiesOfDepartemants.citiesList.filter((item) => item.code_iris == searchResult.code_iris),
+            cities: {
+                data: calculateProperties(response.citiesList.filter((item) => item.code_iris == searchResult.code_iris)),
                 info: searchResult
-            }));
+            }
+        });
 
-        }  
-
-        console.log(selectedCitiesOfRegion, selectedCitiesOfDepartemants, setSelectedCityPart)
-
-        */
         setShowKPI(!showKPI);
     }
 
@@ -94,12 +68,7 @@ function App() {
             await resultForAutoComplete(e.target.value);
         }
     }
-    /*
 
-    const data = async () => await fetchApi('test', {
-        "nom_iris_like": searchValue
-    });
-*/
     return (
         <div className="App">
             <div className='container'>
@@ -120,25 +89,60 @@ function App() {
                     })).slice(0, 3)
                 )}
             </div>
-            {showKPI && selectedCityPart && selectedCitiesOfDepartemants && selectedCitiesOfRegion && (
+            {showKPI && dataPage && (
                 <>
+                    {console.log(dataPage)}
                     <DisplayKPI
                         titre={FRONT_LABELS.GLOBAL_SCORE_TITLE}
-                        score={selectedCityPart.citiesList.score_global}
-                        nomVille={selectedCityPart.info.nom_com}
-                        scoreRegion={selectedCitiesOfRegion.citiesList.score_global}
-                        nomRegion={selectedCitiesOfRegion.info.nom}
-                        nomDepartement={selectedCitiesOfDepartemants.info.nom}
-
+                        score={dataPage.cities.data.score_global}
+                        nomVille={dataPage.cities.info.nom_com}
+                        scoreRegion={dataPage.region.info.score_global}
+                        nomRegion={dataPage.region.info.nom}
+                        nomDepartement={dataPage.departement.info.nom}
                     />
-                    <DisplayKPI titre={FRONT_LABELS.INFORMATION_ACCESS_TITLE}
-                        description={FRONT_LABELS.INFORMATION_ACCESS_DESCRIPTION} score={selectedCityPart.citiesList.access_info} />
-                    <DisplayKPI titre={FRONT_LABELS.NUMERIC_INTERFACE_ACCESS_TITLE}
-                        description={FRONT_LABELS.NUMERIC_INTERFACE_ACCESS_DESCRIPTION} score={selectedCityPart.citiesList.access_interface_numeric} />
-                    <DisplayKPI titre={FRONT_LABELS.NUMERIC_SKILLS_TITLE}
-                        description={FRONT_LABELS.NUMERIC_SKILLS_DESCRIPTION} score={selectedCityPart.citiesList.competence_numerique_scolaire} />
-                    <DisplayKPI titre={FRONT_LABELS.ADMINISTRATIVE_SKILLS_TITLE}
-                        description={FRONT_LABELS.ADMINISTRATIVE_SKILLS_DESCRIPTION} score={selectedCityPart.citiesList.competence_administrative} />
+
+
+                    <DisplayKPI
+                        titre={FRONT_LABELS.INFORMATION_ACCESS_TITLE}
+                        description={FRONT_LABELS.INFORMATION_ACCESS_DESCRIPTION}
+                        score={dataPage.cities.data.global_access}
+                        nomVille={dataPage.cities.info.nom_com}
+                        scoreRegion={dataPage.cities.info.global_access}
+                        nomRegion={dataPage.region.info.nom}
+                        nomDepartement={dataPage.departement.info.nom}
+                    />
+
+                    <DisplayKPI
+                        titre={FRONT_LABELS.NUMERIC_INTERFACE_ACCESS_TITLE}
+                        description={FRONT_LABELS.NUMERIC_INTERFACE_ACCESS_DESCRIPTION}
+                        score={dataPage.cities.data.access_interface_numeric}
+                        nomVille={dataPage.cities.info.nom_com}
+                        scoreRegion={dataPage.cities.info.access_interface_numeric}
+                        nomRegion={dataPage.region.info.nom}
+                        nomDepartement={dataPage.departement.info.nom}
+                    />
+
+
+                    <DisplayKPI
+                        titre={FRONT_LABELS.NUMERIC_SKILLS_TITLE}
+                        description={FRONT_LABELS.NUMERIC_SKILLS_DESCRIPTION}
+                        score={dataPage.cities.data.global_competences}
+                        nomVille={dataPage.cities.info.nom_com}
+                        scoreRegion={dataPage.cities.info.global_competences}
+                        nomRegion={dataPage.region.info.nom}
+                        nomDepartement={dataPage.departement.info.nom}
+                    />
+
+                    <DisplayKPI
+                        titre={FRONT_LABELS.ADMINISTRATIVE_SKILLS_TITLE}
+                        description={FRONT_LABELS.ADMINISTRATIVE_SKILLS_DESCRIPTION}
+                        score={dataPage.cities.data.competence_administrative}
+                        nomVille={dataPage.cities.info.nom_com}
+                        scoreRegion={dataPage.cities.info.competence_administrative}
+                        nomRegion={dataPage.region.info.nom}
+                        nomDepartement={dataPage.departement.info.nom}
+                    />
+
                 </>
 
             )
