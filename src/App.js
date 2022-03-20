@@ -1,8 +1,8 @@
-import { useState } from "react";
+import {useState} from "react";
 import DisplayKPI from "./components/DisplayKPI";
 import PictureSet from "./components/PictureSet";
-import { getAllCitiesOfAllDepartementOfRegion, searchForAutoComplete } from "./lib/fetchApi";
-import { FRONT_LABELS } from "./lib/constants";
+import {getAllCitiesOfAllDepartementOfRegion, searchForAutoComplete} from "./lib/fetchApi";
+import {FRONT_LABELS} from "./lib/constants";
 import franceW from './img/france.webp';
 import franceA from './img/france.avif';
 import franceJ from './img/france.jpg';
@@ -12,6 +12,7 @@ import recycleJ from './img/recycle.jpg';
 import numeriqueW from './img/numerique.webp';
 import numeriqueA from './img/numerique.avif';
 import numeriqueJ from './img/numerique.jpg';
+
 function App() {
     const [searchAutoCompleteResults, setSearchAutoCompleteResults] = useState([]);
     const [showKPI, setShowKPI] = useState(false);
@@ -80,48 +81,46 @@ function App() {
     return (
         <div className="App">
             <div className='container'>
-                <h1>Analysez les données de votre commune
-                <PictureSet
-                    webp={numeriqueW}
-                    avif={numeriqueA}
-                    jpg={numeriqueJ}
-                    alt={"Idée numérique"}
-                    className=""
-
-                />
-
+                <h1>
+                    Analysez les données de votre commune
                 </h1>
+                <div className={'grid'}>
+                    <PictureSet
+                        webp={numeriqueW}
+                        avif={numeriqueA}
+                        jpg={numeriqueJ}
+                        alt={"Idée numérique"}
+                    />
 
-                <PictureSet
-                    webp={franceW}
-                    avif={franceA}
-                    jpg={franceJ}
-                    alt="Carte de la france"
-                    className=""
-                />
+                    <PictureSet
+                        webp={franceW}
+                        avif={franceA}
+                        jpg={franceJ}
+                        alt="Carte de la france"
+                    />
+                </div>
 
-                <input type="search" id="search" name="search" placeholder="Search" onKeyDown={handleKeyPress} />
+                <input type="search" id="search" name="search" placeholder="Search" onKeyDown={handleKeyPress}
+                       style={{paddingTop: '10px'}}/>
 
                 <article>
-                <PictureSet
-                    webp={recycleW}
-                    avif={recycleA}
-                    jpg={recycleJ}
-                    alt={"Icône recyclage"}
-                    className=""
-
-                />
+                    <PictureSet
+                        webp={recycleW}
+                        avif={recycleA}
+                        jpg={recycleJ}
+                        alt={"Icône recyclage"}
+                    />
+                    <br/>
                     Un indice élevé indique une fragilité numérique plus grande.
                     Le calcul des indicateurs étant relatif par rapport aux autres communes,
                     la moyenne de chaque indicateur est de 100.
                 </article>
 
 
-
                 {searchAutoCompleteResults && !showKPI && (
                     [...new Map(searchAutoCompleteResults.map(item => [item["nom_com"], item])).values()].map((searchAutoCompleteResult => {
                         return <article onClick={() => attributeKPI(searchAutoCompleteResult)}
-                            key={searchAutoCompleteResult.code_iris}> {searchAutoCompleteResult.nom_com} </article>
+                                        key={searchAutoCompleteResult.code_iris}> {searchAutoCompleteResult.nom_com} </article>
                     })).slice(0, 3)
                 )}
             </div>
