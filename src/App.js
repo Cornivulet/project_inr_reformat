@@ -86,12 +86,6 @@ function App() {
                 </h1>
 
                 <article className="explication">
-                    <PictureSet
-                        webp={recycleW}
-                        avif={recycleA}
-                        jpg={recycleJ}
-                        alt={"Icône recyclage"}
-                    />
                     <br/>
                     Un indice élevé indique une fragilité numérique plus grande.
                     Le calcul des indicateurs étant relatif par rapport aux autres communes,
@@ -105,7 +99,12 @@ function App() {
                         jpg={numeriqueJ}
                         alt={"Idée numérique"}
                     />
-
+                    <PictureSet
+                        webp={recycleW}
+                        avif={recycleA}
+                        jpg={recycleJ}
+                        alt={"Icône recyclage"}
+                    />
                     <PictureSet
                         webp={franceW}
                         avif={franceA}
@@ -115,7 +114,7 @@ function App() {
                 </div>
 
                 <input type="search" id="search" name="search" placeholder="Search" onKeyDown={handleKeyPress}
-                       style={{paddingTop: '10px'}}/>
+                       style={{paddingTop: '10px', margin:'16px'}}/>
 
 
                 {searchAutoCompleteResults && !showKPI && (
