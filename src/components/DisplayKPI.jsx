@@ -1,7 +1,13 @@
-import redarrow from '../img/redarrow.webp';
-import greenarrow from '../img/greenarrow.webp';
-
-const DisplayKPI = ({titre, description, score, scoreRegion, nomVille, nomRegion, nomDepartement}) => {
+const DisplayKPI = ({
+    titre,
+    description,
+    nomVille,
+    score,
+    nomRegion,
+    scoreRegion,
+    nomDepartement,
+    scoreDepartement
+}) => {
     //function that put strings in uppercase
     const upperCase = (str) => {
         if (str) {
@@ -16,35 +22,24 @@ const DisplayKPI = ({titre, description, score, scoreRegion, nomVille, nomRegion
             <div className="grid">
                 <div>
                     <article>
-                        <header>Evo de la région
-                            <picture>
-                                <source srcSet={redarrow} media={'(max-width: 64 px)'}/>
-                                <img src={redarrow} alt=''/>
-                            </picture>
-                        </header>
-                        <h2>{scoreRegion}</h2>
+                        <header>Région</header>
+                        <h2>{scoreRegion || 'Non spécifié'}</h2>
                         <footer>{nomRegion}</footer>
                     </article>
                 </div>
                 <div>
                     <article>
-                        {score}
+                        <header>Ville choisie</header>
+                        {score || 'Non spécifié'}
                         <footer>{nomVille}</footer>
                     </article>
-
                 </div>
                 <div>
                     <article>
-                        <header>Evo du département
-                            <picture>
-                                <source srcSet={greenarrow} media={'(max-width: 64 px)'}/>
-                                <img src={greenarrow} alt=''/>
-                            </picture>
-                        </header>
-                        Score du département
+                        <header>Département</header>
+                        <h2>{scoreDepartement || 'Non spécifié'}</h2>
                         <footer>{nomDepartement}</footer>
                     </article>
-
 
                 </div>
             </div>

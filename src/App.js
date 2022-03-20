@@ -1,9 +1,17 @@
 import { useState } from "react";
 import DisplayKPI from "./components/DisplayKPI";
-import { fetchApi, getAllCity, getAllCitiesOfAllDepartementOfRegion, searchForAutoComplete } from "./lib/fetchApi";
+import PictureSet from "./components/PictureSet";
+import { getAllCitiesOfAllDepartementOfRegion, searchForAutoComplete } from "./lib/fetchApi";
 import { FRONT_LABELS } from "./lib/constants";
-
-
+import franceW from './img/france.webp';
+import franceA from './img/france.avif';
+import franceJ from './img/france.jpg';
+import recycleW from './img/recycle.webp';
+import recycleA from './img/recycle.avif';
+import recycleJ from './img/recycle.jpg';
+import numeriqueW from './img/numerique.webp';
+import numeriqueA from './img/numerique.avif';
+import numeriqueJ from './img/numerique.jpg';
 function App() {
     const [searchAutoCompleteResults, setSearchAutoCompleteResults] = useState([]);
     const [showKPI, setShowKPI] = useState(false);
@@ -47,7 +55,7 @@ function App() {
                 "score_global": parseInt(previousValue["score_global"]) + parseInt(currentValue["score_global"]),
                 "population": parseInt(previousValue["population"] + currentValue["population"]),
                 "global_competences": parseInt(previousValue["global_competences"]) + parseInt(currentValue["global_competences"]),
-                "global_access": parseInt(previousValue["global_access"] + currentValue["global_access"]),
+                "global_access": parseInt(previousValue["global_access"] + parseInt(currentValue["global_access"])),
                 "competence_numerique_scolaire": parseInt(previousValue["competence_numerique_scolaire"]) + parseInt(currentValue["competence_numerique_scolaire"]),
                 "competence_administrative": parseInt(previousValue["competence_administrative"]) + parseInt(currentValue["competence_administrative"]),
                 "access_interface_numeric": parseInt(previousValue["access_interface_numeric"]) + parseInt(currentValue["access_interface_numeric"]),
@@ -72,15 +80,43 @@ function App() {
     return (
         <div className="App">
             <div className='container'>
-                <h1>Analysez les données de votre commune</h1>
+                <h1>Analysez les données de votre commune
+                <PictureSet
+                    webp={numeriqueW}
+                    avif={numeriqueA}
+                    jpg={numeriqueJ}
+                    alt={"Idée numérique"}
+                    className=""
+
+                />
+
+                </h1>
+
+                <PictureSet
+                    webp={franceW}
+                    avif={franceA}
+                    jpg={franceJ}
+                    alt="Carte de la france"
+                    className=""
+                />
 
                 <input type="search" id="search" name="search" placeholder="Search" onKeyDown={handleKeyPress} />
 
                 <article>
+                <PictureSet
+                    webp={recycleW}
+                    avif={recycleA}
+                    jpg={recycleJ}
+                    alt={"Icône recyclage"}
+                    className=""
+
+                />
                     Un indice élevé indique une fragilité numérique plus grande.
                     Le calcul des indicateurs étant relatif par rapport aux autres communes,
                     la moyenne de chaque indicateur est de 100.
                 </article>
+
+
 
                 {searchAutoCompleteResults && !showKPI && (
                     [...new Map(searchAutoCompleteResults.map(item => [item["nom_com"], item])).values()].map((searchAutoCompleteResult => {
@@ -91,14 +127,14 @@ function App() {
             </div>
             {showKPI && dataPage && (
                 <>
-                    {console.log(dataPage)}
                     <DisplayKPI
                         titre={FRONT_LABELS.GLOBAL_SCORE_TITLE}
                         score={dataPage.cities.data.score_global}
                         nomVille={dataPage.cities.info.nom_com}
-                        scoreRegion={dataPage.region.info.score_global}
+                        scoreRegion={dataPage.region.data.score_global}
                         nomRegion={dataPage.region.info.nom}
                         nomDepartement={dataPage.departement.info.nom}
+                        scoreDepartement={dataPage.departement.data.score_global}
                     />
 
 
@@ -110,6 +146,8 @@ function App() {
                         scoreRegion={dataPage.cities.info.global_access}
                         nomRegion={dataPage.region.info.nom}
                         nomDepartement={dataPage.departement.info.nom}
+                        scoreDepartement={dataPage.departement.data.global_access}
+
                     />
 
                     <DisplayKPI
@@ -120,6 +158,8 @@ function App() {
                         scoreRegion={dataPage.cities.info.access_interface_numeric}
                         nomRegion={dataPage.region.info.nom}
                         nomDepartement={dataPage.departement.info.nom}
+                        scoreDepartement={dataPage.departement.data.access_interface_numeric}
+
                     />
 
 
@@ -131,6 +171,8 @@ function App() {
                         scoreRegion={dataPage.cities.info.global_competences}
                         nomRegion={dataPage.region.info.nom}
                         nomDepartement={dataPage.departement.info.nom}
+                        scoreDepartement={dataPage.departement.data.global_competences}
+
                     />
 
                     <DisplayKPI
@@ -141,6 +183,8 @@ function App() {
                         scoreRegion={dataPage.cities.info.competence_administrative}
                         nomRegion={dataPage.region.info.nom}
                         nomDepartement={dataPage.departement.info.nom}
+                        scoreDepartement={dataPage.departement.data.competence_administrative}
+
                     />
 
                 </>
